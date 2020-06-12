@@ -1,3 +1,4 @@
 rootProject.name='SharedPrefManagerDemo'
 include ':app'
 include ':SharedPrefManagerAnnotation'
+include ':SharedPrefManagerProcessor'
