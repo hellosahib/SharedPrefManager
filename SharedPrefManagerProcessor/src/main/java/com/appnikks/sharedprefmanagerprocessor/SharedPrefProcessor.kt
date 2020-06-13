@@ -1,5 +1,6 @@
 package com.appnikks.sharedprefmanagerprocessor
 
+import com.appnikks.sharedprefmanagerannotation.PrefKeyInfo
 import com.appnikks.sharedprefmanagerannotation.SharedPrefManager
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.*
@@ -163,6 +164,13 @@ class SharedPrefProcessor : AbstractProcessor() {
         for (enclosed in element.enclosedElements) {
             if (enclosed.kind == ElementKind.FIELD) {
                 val enclosedTypeName = enclosed.asNullableTypeName()
+                val enclosedAnnotation = enclosed.getAnnotation(PrefKeyInfo::class.java)
+                val sharedPrefKey =
+                    if (enclosedAnnotation != null && enclosedAnnotation.key.isNotEmpty()) {
+                        enclosedAnnotation.key
+                    } else {
+                        enclosed.simpleName.toString()
+                    }
                 classBuilder.addProperty(
                     PropertySpec.builder(
                         enclosed.simpleName.toString(),
@@ -174,7 +182,7 @@ class SharedPrefProcessor : AbstractProcessor() {
                             FunSpec.getterBuilder()
                                 .addStatement(
                                     "return ${enclosedTypeName.getPreferenceGetterStringBasedOnValue(
-                                        enclosed.simpleName.toString(),
+                                        sharedPrefKey,
                                         enclosed.getValueBasedOnDataType(enclosedTypeName)
                                     )}"
                                 )
@@ -192,7 +200,7 @@ class SharedPrefProcessor : AbstractProcessor() {
                                 .addStatement("field = value")
                                 .addStatement(
                                     enclosedTypeName.getPreferenceSetterStringBasedOnDataType(
-                                        enclosed.simpleName.toString()
+                                        sharedPrefKey
                                     )
                                 )
                                 .build()
@@ -279,7 +287,22 @@ class SharedPrefProcessor : AbstractProcessor() {
                 "\"$it\""
             }
             "kotlin.Boolean" -> accept(ElementValueGetter<Boolean>(), null)
-            else -> throw RuntimeException("getValueBasedOnDataType For TypeName $this not found")
+            "kotlin.Int" -> accept(ElementValueGetter<Int>(), null)
+            "kotlin.Long" -> accept(ElementValueGetter<Long>(), null)
+            "kotlin.Float" -> accept(ElementValueGetter<Float>(), null).let {
+                /**
+                 * If we Dont Add Character F
+                 * Kotlin Interprets it as Double instead of Float
+                 */
+                return@let "${it}F"
+            }
+            else -> {
+                processingEnv.messager.printMessage(
+                    Diagnostic.Kind.ERROR,
+                    "getValueBasedOnDataType For TypeName $classType not found"
+                )
+                throw Exception()
+            }
         }
     }
 
@@ -294,7 +317,16 @@ class SharedPrefProcessor : AbstractProcessor() {
             "kotlin.String?" -> "mPreferences.getString(%S, null)"
             "kotlin.String" -> "mPreferences.getString(%S, %L)"
             "kotlin.Boolean" -> "mPreferences.getBoolean(%S, %L)"
-            else -> throw RuntimeException("getPreferenceGetterBasedOnType not found for $this")
+            "kotlin.Int" -> "mPreferences.getInt(%S, %L)"
+            "kotlin.Long" -> "mPreferences.getLong(%S, %L)"
+            "kotlin.Float" -> "mPreferences.getFloat(%S, %L)"
+            else -> {
+                processingEnv.messager.printMessage(
+                    Diagnostic.Kind.ERROR,
+                    "getPreferenceGetterBasedOnType not found for $this"
+                )
+                throw Exception()
+            }
         }
         return if (value != null) {
             CodeBlock.builder().addStatement(prefGetterString, key, value).build()
@@ -311,7 +343,16 @@ class SharedPrefProcessor : AbstractProcessor() {
         return when (this.toString()) {
             "kotlin.String", "kotlin.String?" -> "mEditor.putString($formattedKey, field).apply()"
             "kotlin.Boolean" -> "mEditor.putBoolean($formattedKey, field).apply()"
-            else -> throw RuntimeException("getPreferenceGetterBasedOnType not found for $this")
+            "kotlin.Int" -> "mEditor.putInt($formattedKey, field).apply()"
+            "kotlin.Long" -> "mEditor.putLong($formattedKey, field).apply()"
+            "kotlin.Float" -> "mEditor.putFloat($formattedKey, field).apply()"
+            else -> {
+                processingEnv.messager.printMessage(
+                    Diagnostic.Kind.ERROR,
+                    "getPreferenceGetterBasedOnType not found for $this"
+                )
+                throw Exception()
+            }
         }
     }
 }
