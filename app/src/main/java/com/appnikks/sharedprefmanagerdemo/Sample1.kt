@@ -1,7 +1,7 @@
 package com.appnikks.sharedprefmanagerdemo
 
-import com.appnikks.sharedprefmanagerannotation.PrefKeyInfo
-import com.appnikks.sharedprefmanagerannotation.SharedPrefManager
+import com.appnikks.sharefprefannotation.PrefKeyInfo
+import com.appnikks.sharefprefannotation.SharedPrefManager
 
 /**
  * An Demo Class To Check Usage

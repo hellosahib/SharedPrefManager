@@ -1,7 +1,7 @@
-package com.appnikks.sharedprefmanagerprocessor
+package com.appnikks.sharedprefprocessor
 
-import com.appnikks.sharedprefmanagerannotation.PrefKeyInfo
-import com.appnikks.sharedprefmanagerannotation.SharedPrefManager
+import com.appnikks.sharefprefannotation.PrefKeyInfo
+import com.appnikks.sharefprefannotation.SharedPrefManager
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.jvm.synchronized

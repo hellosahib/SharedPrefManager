@@ -1,4 +1,4 @@
-package com.appnikks.sharedprefmanagerannotation
+package com.appnikks.sharefprefannotation
 
 /**
  * @author Sahib Singh
