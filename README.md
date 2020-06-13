@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     implementation 'com.github.sahibedu.SharedPrefManager:Annotation:{RELEASE}'
-    implementation 'com.github.sahibedu.SharedPrefManager:Processor:{RELEASE}'
+    kapt 'com.github.sahibedu.SharedPrefManager:Processor:{RELEASE}'
 }
 ```
 
