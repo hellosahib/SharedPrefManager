@@ -18,6 +18,11 @@ import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.ElementKindVisitor6
 import javax.tools.Diagnostic
 
+/**
+ * @author Sahib Singh
+ * @since 13/06/2020
+ * Processor for Shared Preference Manager Annotations
+ */
 @AutoService(Processor::class)
 @SupportedOptions(SharedPrefProcessor.GENERATED_PACKAGE_LOCATION)
 class SharedPrefProcessor : AbstractProcessor() {
