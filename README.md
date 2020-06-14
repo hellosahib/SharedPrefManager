@@ -19,7 +19,7 @@ dependencies {
 
 ### How To Use It
 Define an abstract class that contain your fields you want to save and annotate it with **@SharedPrefManager**
-```
+```kotlin
 @SharedPrefManager(preferenceName = "someRandomKey")
 abstract class Sample1 {
     val isFirstRunDone: Boolean = false
@@ -41,11 +41,11 @@ _Explaining the Annotations_
 ## :boom: That's All For The Code Part from Your Side To Create An SharedPrefManager :boom:
 
 Now For Using it. you just need to pass the context and thats all you require. 
-```
+```kotlin
 Sample1SharedPreferenceManager.getInstance(this)
 ```
 Now you can use this and access any field with simple code like
-```
+```kotlin
 // Getter
 Sample1SharedPreferenceManager.getInstance(this).isFirstRunDone
 // Setter
